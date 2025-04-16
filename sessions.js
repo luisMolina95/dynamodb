@@ -1,3 +1,4 @@
+const DAYS_7 = 7 * 24 * 60 * 60 * 1000;
 const dynamodb = new AWSDynamoDB.DynamoDBClient({
   credentials: {
     accessKeyId: "fakeMyKeyId",
@@ -21,10 +22,21 @@ function cellToHTML(obj) {
     )
     .join(",<br>");
 }
-
+const urlParams = new URLSearchParams(window.location.search);
+const tableName =urlParams.get("tableName")|| "sessions";
 async function main() {
+  console.log(urlParams.get("tableName"));
+  const currentDate = new Date(); // or any specific date
+  console.log(Math.floor(currentDate.getTime() / 1000));
   const comRes = await ddbDocClient.send(
-    new AWSLibDynamoDB.ScanCommand({ TableName: "sessions" })
+    new AWSLibDynamoDB.ScanCommand({
+      TableName: tableName,
+      FilterExpression: "#ttl > :epoch",
+      ExpressionAttributeNames: { "#ttl": "ttl" },
+      ExpressionAttributeValues: {
+        ":epoch": Math.floor(currentDate.getTime() / 1000),
+      },
+    })
   );
   console.log(comRes);
   const table = document.getElementById("table");
@@ -45,13 +57,17 @@ document
     /** @type {string} */
     const username = document.getElementById("username").value;
     console.log(username);
-    AWSLibDynamoDB
+    const currentDate = new Date(); // or any specific date
+    const expirationDate = new Date(currentDate.getTime() + DAYS_7);
     const algo = await ddbDocClient.send(
       new AWSLibDynamoDB.PutCommand({
-        TableName: "sessions",
+        TableName: tableName,
         Item: {
           pk: crypto.randomUUID(),
           username: username.trim().toLowerCase(),
+          createdAt: currentDate.toISOString(),
+          expiresAt: expirationDate.toISOString(),
+          ttl: Math.floor(expirationDate.getTime() / 1000),
         },
       })
     );

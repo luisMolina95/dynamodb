@@ -27,7 +27,7 @@ async function main() {
   comRes.TableNames.forEach(async (TableName) => {
     const row = table.insertRow();
     const cell = row.insertCell(0);
-    cell.textContent = TableName;
+    cell.innerHTML = `<a href="sessions.html?tableName=${TableName}"><b>${TableName}</b></a>`;
 
     const cell2 = row.insertCell(1);
     const res3 = await dynamodb.send(
