@@ -3,7 +3,7 @@ const dynamodb = new AWSDynamoDB.DynamoDBClient({
     accessKeyId: "fakeMyKeyId",
     secretAccessKey: "fakeSecretAccessKey",
   },
-  endpoint: "http://localhost:9090",
+  endpoint: "https://renderdynamodb.onrender.com",
   region: "fakeRegion",
 });
 
