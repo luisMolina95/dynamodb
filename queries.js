@@ -1,14 +1,4 @@
 const DAYS_7 = 7 * 24 * 60 * 60 * 1000;
-const dynamodb = new AWSDynamoDB.DynamoDBClient({
-  credentials: {
-    accessKeyId: "fakeMyKeyId",
-    secretAccessKey: "fakeSecretAccessKey",
-  },
-  endpoint: "http://localhost:9090",
-  region: "fakeRegion",
-});
-
-const ddbDocClient = AWSLibDynamoDB.DynamoDBDocument.from(dynamodb);
 
 let sessions = [];
 
@@ -63,6 +53,7 @@ async function main(username) {
   comRes.Items.forEach(async (item) => {
     const row = table.insertRow();
     const cell = row.insertCell(0);
+    cell.id = item.pk;
     cell.innerHTML = cellToHTML(item);
   });
 }

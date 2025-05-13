@@ -1,14 +1,4 @@
 const DAYS_7 = 7 * 24 * 60 * 60 * 1000;
-const dynamodb = new AWSDynamoDB.DynamoDBClient({
-  credentials: {
-    accessKeyId: "fakeMyKeyId",
-    secretAccessKey: "fakeSecretAccessKey",
-  },
-  endpoint: "http://localhost:9090",
-  region: "fakeRegion",
-});
-
-const ddbDocClient = AWSLibDynamoDB.DynamoDBDocument.from(dynamodb);
 
 function cellToHTML(obj) {
   return Object.entries(obj)
@@ -23,7 +13,7 @@ function cellToHTML(obj) {
     .join(",<br>");
 }
 const urlParams = new URLSearchParams(window.location.search);
-const tableName =urlParams.get("tableName")|| "sessions";
+const tableName = urlParams.get("tableName") || "sessions";
 async function main() {
   console.log(urlParams.get("tableName"));
   const currentDate = new Date(); // or any specific date

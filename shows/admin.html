@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Show Admin</title>
+  </head>
+
+  <body>
+    <h1>Show Admin</h1>
+    <ul>
+      <li><a href="./">Shows</a></li>
+    </ul>
+
+    <table id="table">
+      <tr>
+        <th>ID:</th>
+        <th>Title:</th>
+      </tr>
+    </table>
+    <br />
+    <button id="save">Save</button>
+    <h3>Episodes:</h3>
+    <form id="createEpisode">
+      <label>Title:</label>
+      <input type="text" id="episodeTitle" value="..." />
+      <input type="hidden" name="id" id="episodeShowId" />
+      <input type="submit" value="submit" />
+    </form>
+    <table id="episodesTable">
+      <tr>
+        <th>Item</th>
+      </tr>
+    </table>
+  </body>
+  <script src="../libs/aws-client-dynamodb-3.788.0.min.js"></script>
+  <script src="../libs/aws-lib-dynamodb-3.789.0.min.js"></script>
+  <script src="../utils/dynamodb-client.js"></script>
+  <script src="./admin.js"></script>
+</html>

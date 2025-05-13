@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+      rel="stylesheet"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shows</title>
+  </head>
+
+  <body>
+    <h1>Shows</h1>
+    <ul>
+      <li><a href="/">Home</a></li>
+    </ul>
+    <form id="createShow">
+      <label>Title:</label>
+      <input type="text" id="title" value="..." />
+      <input type="submit" value="submit" />
+    </form>
+    <table id="table">
+      <tr>
+        <th>Item</th>
+      </tr>
+    </table>
+  </body>
+  <script src="../libs/aws-client-dynamodb-3.788.0.min.js"></script>
+  <script src="../libs/aws-lib-dynamodb-3.789.0.min.js"></script>
+  <script src="../utils/dynamodb-client.js"></script>
+  <script src="./shows.js"></script>
+</html>
