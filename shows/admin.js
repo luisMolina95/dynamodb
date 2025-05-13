@@ -41,12 +41,14 @@ async function main() {
     new AWSLibDynamoDB.QueryCommand({
       TableName: TABLE_NAME,
       IndexName: "GSI1",
-      KeyConditionExpression: "#PK = :PK",
+      KeyConditionExpression: "#PK = :PK and begins_with(#SK, :SK)",
       ExpressionAttributeNames: {
         "#PK": "GSI1PK",
+        "#SK": "GSI1SK",
       },
       ExpressionAttributeValues: {
         ":PK": id,
+        ":SK": "EPISODE",
       },
       ScanIndexForward: false,
     })
@@ -59,6 +61,32 @@ async function main() {
     const cell = row.insertCell(0);
     cell.innerHTML = cellToHTML(item);
   });
+
+  const queryClipsComRes = await ddbDocClient.send(
+    new AWSLibDynamoDB.QueryCommand({
+      TableName: TABLE_NAME,
+      IndexName: "GSI1",
+      KeyConditionExpression: "#PK = :PK and begins_with(#SK, :SK)",
+      ExpressionAttributeNames: {
+        "#PK": "GSI1PK",
+        "#SK": "GSI1SK",
+      },
+      ExpressionAttributeValues: {
+        ":PK": id,
+        ":SK": "CLIP",
+      },
+      ScanIndexForward: false,
+    })
+  );
+
+  const clipsTable = document.getElementById("clipsTable");
+  queryClipsComRes.Items.forEach(async (item) => {
+    const row = clipsTable.insertRow();
+    const cell = row.insertCell(0);
+    cell.innerHTML = cellToHTML(item);
+  });
+
+
 }
 main();
 

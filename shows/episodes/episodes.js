@@ -1,7 +1,24 @@
+function cellToHTML(obj) {
+  return Object.entries(obj)
+    .map(
+      ([key, value]) =>
+        `<b>${key}:</b> ${
+          typeof value === "object"
+            ? `${JSON.stringify(value, null, 2)}`
+            : value
+        }`
+    )
+    .join(",<br>");
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get("id");
+let showId = null;
 
 async function main() {
+  const episodeId = document.getElementById("episodeId");
+  episodeId.value = id;
+
   const comRes = await ddbDocClient.send(
     new AWSLibDynamoDB.GetCommand({
       TableName: TABLE_NAME,
@@ -18,6 +35,7 @@ async function main() {
 
   const cellShowId = row.insertCell(1);
   cellShowId.innerHTML = episodeItem.showId;
+  showId = episodeItem.showId;
 
   const cellTitle = row.insertCell(2);
   cellTitle.innerHTML = `<input type="text" id="title" value="${episodeItem.title}" />`;
@@ -44,6 +62,28 @@ async function main() {
     const cell = row.insertCell(0);
     cell.innerHTML = cellToHTML(item);
   });
+
+  const queryClipsComRes = await ddbDocClient.send(
+    new AWSLibDynamoDB.QueryCommand({
+      TableName: TABLE_NAME,
+      IndexName: "GSI2",
+      KeyConditionExpression: "#PK = :PK",
+      ExpressionAttributeNames: {
+        "#PK": "GSI2PK",
+      },
+      ExpressionAttributeValues: {
+        ":PK": id,
+      },
+      ScanIndexForward: false,
+    })
+  );
+  console.log(queryClipsComRes);
+  const clipsTable = document.getElementById("clipsTable");
+  queryClipsComRes.Items.forEach(async (item) => {
+    const row = clipsTable.insertRow();
+    const cell = row.insertCell(0);
+    cell.innerHTML = cellToHTML(item);
+  });
 }
 main();
 
@@ -60,29 +100,33 @@ document.getElementById("save").addEventListener("click", async function () {
         "#updatedAt": "updatedAt",
       },
       ExpressionAttributeValues: {
-        ":value": newTitle,":updatedAt": new Date().toISOString(),
+        ":value": newTitle,
+        ":updatedAt": new Date().toISOString(),
       },
     })
   );
 });
 
 document
-  .getElementById("generateClips")
+  .getElementById("generateClip")
   .addEventListener("submit", async function () {
-    /** @type {string} */
-    const episodeTitle = document.getElementById("episodeTitle").value;
     const currentDate = new Date();
-    const episodeID = `EPISODE#${crypto.randomUUID()}`;
+    const clipID = `CLIP#${crypto.randomUUID()}`;
     await ddbDocClient.send(
       new AWSLibDynamoDB.PutCommand({
         TableName: TABLE_NAME,
         Item: {
-          PK: episodeID,
-          SK: episodeID,
-          GSI1PK: id,
-          GSI1SK: `EPISODE#${currentDate.toISOString()}`,
-          title: episodeTitle.trim().toLowerCase(),
+          PK: clipID,
+          SK: clipID,
+          GSI1PK: showId,
+          GSI1SK: `CLIP#${currentDate.toISOString()}`,
+          GSI2PK: id,
+          GSI2SK: `CLIP#${currentDate.toISOString()}`,
+          data: "Random clip",
           createdAt: currentDate.toISOString(),
+          id: clipID,
+          showId: showId,
+          episodeId: id,
         },
       })
     );
