@@ -13,6 +13,8 @@ function cellToHTML(obj) {
 
 const urlParams = new URLSearchParams(window.location.search);
 const id = urlParams.get("id");
+const exclusiveStartKey = urlParams.get("exclusiveStartKey");
+const prevExclusiveStartKey = urlParams.get("prevExclusiveStartKey");
 let showId = null;
 
 async function main() {
@@ -39,30 +41,6 @@ async function main() {
 
   const cellTitle = row.insertCell(2);
   cellTitle.innerHTML = `<input type="text" id="title" value="${episodeItem.title}" />`;
-
-  const queryComRes = await ddbDocClient.send(
-    new AWSLibDynamoDB.QueryCommand({
-      TableName: TABLE_NAME,
-      IndexName: "GSI1",
-      KeyConditionExpression: "#PK = :PK",
-      ExpressionAttributeNames: {
-        "#PK": "GSI1PK",
-      },
-      ExpressionAttributeValues: {
-        ":PK": id,
-      },
-      ScanIndexForward: false,
-    })
-  );
-
-  const episodesTable = document.getElementById("episodesTable");
-
-  queryComRes.Items.forEach(async (item) => {
-    const row = episodesTable.insertRow();
-    const cell = row.insertCell(0);
-    cell.innerHTML = cellToHTML(item);
-  });
-
   const queryClipsComRes = await ddbDocClient.send(
     new AWSLibDynamoDB.QueryCommand({
       TableName: TABLE_NAME,
@@ -70,13 +48,42 @@ async function main() {
       KeyConditionExpression: "#PK = :PK",
       ExpressionAttributeNames: {
         "#PK": "GSI2PK",
+        "#id": "id",
       },
       ExpressionAttributeValues: {
         ":PK": id,
       },
       ScanIndexForward: false,
+      ProjectionExpression: "#id,createdAt",
+      Limit: 3,
+      ExclusiveStartKey:
+        exclusiveStartKey && exclusiveStartKey !== "null"
+          ? JSON.parse(exclusiveStartKey)
+          : undefined,
     })
   );
+
+  const backPage = document.getElementById("backPage");
+  if (exclusiveStartKey) {
+    backPage.href = `?id=${encodeURIComponent(
+      id
+    )}&exclusiveStartKey=${encodeURIComponent(prevExclusiveStartKey)}`;
+  } else {
+    backPage.href = "";
+  }
+
+  const nextPage = document.getElementById("nextPage");
+
+  if (queryClipsComRes.LastEvaluatedKey) {
+    nextPage.href = `?id=${encodeURIComponent(
+      id
+    )}&exclusiveStartKey=${encodeURIComponent(
+      JSON.stringify(queryClipsComRes.LastEvaluatedKey)
+    )}&prevExclusiveStartKey=${encodeURIComponent(exclusiveStartKey)}`;
+  } else {
+    nextPage.href = "";
+  }
+
   console.log(queryClipsComRes);
   const clipsTable = document.getElementById("clipsTable");
   queryClipsComRes.Items.forEach(async (item) => {
