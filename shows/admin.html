@@ -2,10 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
-      rel="stylesheet"
-    />
+    <link href="https://meyerweb.com/ui/meyerweb.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Show Admin</title>
   </head>
@@ -18,12 +15,18 @@
 
     <table id="table">
       <tr>
-        <th>ID:</th>
-        <th>Title:</th>
+        <td><b>ID:</b></td>
+        <td><b>Title:</b></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td><button id="save">Save</button></td>
       </tr>
     </table>
     <br />
-    <button id="save">Save</button>
     <h3>Episodes:</h3>
     <form id="createEpisode">
       <label>Title:</label>
@@ -33,13 +36,13 @@
     </form>
     <table id="episodesTable">
       <tr>
-        <th>Item</th>
+        <td><b>Item:</b></td>
       </tr>
     </table>
-    <h4>Clips:</h4>
+    <h3>Clips:</h3>
     <table id="clipsTable">
       <tr>
-        <th>Item</th>
+        <td><b>Item:</b></td>
       </tr>
     </table>
   </body>

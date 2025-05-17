@@ -31,16 +31,10 @@ async function main() {
   const episodeItem = comRes.Item;
 
   const table = document.getElementById("table");
-  const row = table.insertRow();
-  const cellId = row.insertCell(0);
-  cellId.innerHTML = episodeItem.PK;
+  table.rows[1].cells[0].innerHTML = episodeItem.PK;
+  table.rows[1].cells[1].innerHTML = episodeItem.showId;
+  table.rows[1].cells[2].innerHTML = `<input type="text" id="title" value="${episodeItem.title}" />`;
 
-  const cellShowId = row.insertCell(1);
-  cellShowId.innerHTML = episodeItem.showId;
-  showId = episodeItem.showId;
-
-  const cellTitle = row.insertCell(2);
-  cellTitle.innerHTML = `<input type="text" id="title" value="${episodeItem.title}" />`;
   const queryClipsComRes = await ddbDocClient.send(
     new AWSLibDynamoDB.QueryCommand({
       TableName: TABLE_NAME,

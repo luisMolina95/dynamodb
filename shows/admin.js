@@ -30,12 +30,9 @@ async function main() {
   const showItem = comRes.Item;
 
   const table = document.getElementById("table");
-  const row = table.insertRow();
-  const cellId = row.insertCell(0);
-  cellId.innerHTML = showItem.PK;
+  table.rows[1].cells[0].innerHTML = showItem.PK;
 
-  const cellTitle = row.insertCell(1);
-  cellTitle.innerHTML = `<input type="text" id="title" value="${showItem.title}" />`;
+  table.rows[1].cells[1].innerHTML = `<input type="text" id="title" value="${showItem.title}" />`;
 
   const queryComRes = await ddbDocClient.send(
     new AWSLibDynamoDB.QueryCommand({
@@ -85,8 +82,6 @@ async function main() {
     const cell = row.insertCell(0);
     cell.innerHTML = cellToHTML(item);
   });
-
-
 }
 main();
 
@@ -107,10 +102,7 @@ document.getElementById("save").addEventListener("click", async function () {
       ExpressionAttributeValues: {
         ":value": newTitle,
         ":updatedAt": new Date().toISOString(),
-        ":GSI1SK": `SHOW#${newTitle
-          .trim()
-          .replace(/\s+/g, "_")
-          .toUpperCase()}`,
+        ":GSI1SK": `SHOW#${newTitle.trim().replace(/\s+/g, "_").toUpperCase()}`,
       },
     })
   );
