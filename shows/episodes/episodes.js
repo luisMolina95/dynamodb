@@ -29,6 +29,7 @@ async function main() {
   );
 
   const episodeItem = comRes.Item;
+  showId = episodeItem.showId;
 
   const table = document.getElementById("table");
   table.rows[1].cells[0].innerHTML = episodeItem.PK;
@@ -123,7 +124,6 @@ document
           GSI1SK: `CLIP#${currentDate.toISOString()}`,
           GSI2PK: id,
           GSI2SK: `CLIP#${currentDate.toISOString()}`,
-          data: "Random clip",
           createdAt: currentDate.toISOString(),
           id: clipID,
           showId: showId,
