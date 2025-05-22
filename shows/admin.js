@@ -1,7 +1,7 @@
 function cellToHTML(obj) {
   return Object.entries(obj)
     .map(([key, value]) =>
-      key === "PK"
+      key === "id"
         ? `<b>${key}:</b> <a href="./episodes/?id=${encodeURIComponent(
             value
           )}">${value}</a>`
@@ -47,7 +47,7 @@ async function main() {
         ":PK": id,
         ":SK": "EPISODE",
       },
-      ScanIndexForward: false,
+      ScanIndexForward: false,ProjectionExpression: "createdAt,title,id",
     })
   );
 
@@ -72,7 +72,7 @@ async function main() {
         ":PK": id,
         ":SK": "CLIP",
       },
-      ScanIndexForward: false,
+      ScanIndexForward: false,ProjectionExpression: "createdAt,id",
     })
   );
 

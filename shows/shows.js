@@ -59,7 +59,7 @@ const subscribe = async (showId, status) => {
 function cellToHTML(obj) {
   return Object.entries(obj)
     .map(([key, value]) =>
-      key === "PK"
+      key === "id"
         ? `<b>${key}:</b> <a href="./admin.html?id=${encodeURIComponent(
             value
           )}">${value}</a>`
@@ -84,6 +84,7 @@ async function main() {
       ExpressionAttributeValues: {
         ":PK": "SHOW",
       },
+      ProjectionExpression: "createdAt,title,id",
     })
   );
   console.log(comRes);
